@@ -1,4 +1,6 @@
-Setup 
+# si
+
+## Setup 
 
 * GitBash
 * AWS CLI
@@ -7,4 +9,3 @@ Setup
 
 
 
-# si
