@@ -16,6 +16,6 @@ VSC
 
 # Connect to an ec2
 1. Deploy the artifacts (contact us)
-1. terraform output private_key | grep -v EOT | grep -v -e '^$' > ~/lp.priv.key.pem
-1. ssh -l ec2-user -i ~/lp.priv.key.pem  &gt;PUBLIC_IP&lt; 
+1. Get the private key and put it in lp.priv.key.pem in your home dir
+1. ssh -l ec2-user -i &gt;HOME_DIR&lt;/lp.priv.key.pem  &gt;PUBLIC_IP&lt; 
 
