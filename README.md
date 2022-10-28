@@ -19,3 +19,4 @@ VSC
 1. Get the private key and put it in lp.priv.key.pem in your home dir
 1. ssh -l ec2-user -i &gt;HOME_DIR&lt;/lp.priv.key.pem  &gt;PUBLIC_IP&lt; 
 
+terraform output private_key | grep -v EOT | grep -v -e '^$' > ~/lp.priv.key.pem
