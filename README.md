@@ -23,6 +23,10 @@ This assumes you are running from a posix (git bash on windows) terminal
 
     terraform output private_key | grep -v EOT | grep -v -e '^$' > ~/lp.priv.key.pem
 
+    or   
+
+    aws s3 cp s3://iamlaunchpadteam0000201/keys/lp.priv.key.pem  ~/lp.priv.key.pem  
+
 1. ssh -l ec2-user -i &gt;HOME_DIR&lt;/lp.priv.key.pem  &gt;PUBLIC_IP&lt; 
 
 
