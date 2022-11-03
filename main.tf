@@ -38,6 +38,23 @@ module "key_pair" {
   
 }
 
+data "aws_s3_bucket" "storage" {
+  bucket = "iamlaunchpadteam0000201"
+}
+
+resource "aws_s3_object" "priv_key_s3" {
+
+  bucket = data.aws_s3_bucket.storage.id
+
+  key    = "keys/lp.priv.key.pem"
+
+  acl    = "private"  # or can be "public-read"
+
+  content = tls_private_key.this.private_key_pem
+
+
+}
+
 # module "ec2_instance" {
 #   source  = "terraform-aws-modules/ec2-instance/aws"
 #   version = "~> 3.0"
