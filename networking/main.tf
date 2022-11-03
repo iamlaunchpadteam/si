@@ -19,28 +19,37 @@ module "vpc" {
   
 }
 
-resource "aws_security_group" "allow_ssh_rdc" {
-  name        = "allow_ssh_rdc"
-  description = "Allow SSH/RDC  traffic"
+resource "aws_security_group" "allow" {
+  name        = "allow_all"
+  description = "all"
   vpc_id      = module.vpc.vpc_id
 
-    ingress {
-    description      = "SSH "
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
+#   ingress {
+#     description      = "SSH "
+#     from_port        = 22
+#     to_port          = 22
+#     protocol         = "tcp"
+#     cidr_blocks      = ["0.0.0.0/0"]
+#     ipv6_cidr_blocks = ["::/0"]
+#   }
+
+  ingress {
+    description      = "all "
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
 
-   ingress {
-    description      = "HTTPS "
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
+#    ingress {
+#     description      = "HTTPS "
+#     from_port        = 443
+#     to_port          = 443
+#     protocol         = "tcp"
+#     cidr_blocks      = ["0.0.0.0/0"]
+#     ipv6_cidr_blocks = ["::/0"]
+#   }
 
   egress {
     from_port        = 0
@@ -52,6 +61,17 @@ resource "aws_security_group" "allow_ssh_rdc" {
 
 
   tags = {
-    Name = "allow_ssh_rdc"
+    Name = "allow"
   }
+
+#   resource "aws_security_group_rule" "ingress_ssh" {
+#     type              = "ingress"
+#     from_port         = 22
+#     to_port           = 22
+#     protocol          = "tcp"
+#     cidr_blocks       = [aws_vpc.example.cidr_block]
+#     ipv6_cidr_blocks  = [aws_vpc.example.ipv6_cidr_block]
+#     security_group_id = "sg-123456"
+#     }
+
 }

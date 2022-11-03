@@ -9,25 +9,38 @@ data "aws_ami" "posix_ami" {
 
 }
 
-
-module "ec2_instance" {
-  source  = "terraform-aws-modules/ec2-instance/aws"
-  version = "~> 3.0"
+resource "aws_instance" "posix" { 
+  subnet_id            = var.target_subnet
+  vpc_security_group_ids = var.vpc_security_group_ids
+  ami           = data.aws_ami.posix_ami.id
+  instance_type = "t3.micro"
 
   for_each = toset(["one", "two"])
-  
-
-  name = "posix-instance-${each.key}"
-
-  ami                    = data.aws_ami.posix_ami.id
-  instance_type          = "t2.micro"
-  key_name               = var.key_pair_name
-  monitoring             = true
-  vpc_security_group_ids = var.vpc_security_group_ids
-  subnet_id              = var.target_subnet
+  key_name = var.key_pair_name
 
   tags = {
-    Terraform   = "true"
-    Environment = "dev"
+    Name = "posix-instance-${each.key}"
   }
 }
+
+# module "ec2_instance" {
+#   source  = "terraform-aws-modules/ec2-instance/aws"
+#   version = "~> 3.0"
+
+#   for_each = toset(["one", "two"])
+  
+
+#   name = "posix-instance-${each.key}"
+
+#   ami                    = data.aws_ami.posix_ami.id
+#   instance_type          = "t2.micro"
+#   key_name               = var.key_pair_name
+#   monitoring             = true
+#   vpc_security_group_ids = var.vpc_security_group_ids
+#   subnet_id              = var.target_subnet
+
+#   tags = {
+#     Terraform   = "true"
+#     Environment = "dev"
+#   }
+# }
