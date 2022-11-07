@@ -13,11 +13,7 @@ VSC
 1. Confirm you have access to aws
 1  Ready to go!
 
-
-# Connect to an ec2  
-
-This assumes you are running from a posix (git bash on windows) terminal  
-
+# Get the private key
 1. Deploy the artifacts (contact us)
 1. Get the private key and put it in lp.priv.key.pem in your home dir
 
@@ -27,7 +23,20 @@ This assumes you are running from a posix (git bash on windows) terminal
 
     aws s3 cp s3://iamlaunchpadteam0000201/keys/lp.priv.key.pem  ~/lp.priv.key.pem  
 
+
+# Connect to an ec2  (posix)
+
+This assumes you are running from a posix (git bash on windows) terminal  
+
 1. ssh -l ec2-user -i &gt;HOME_DIR&lt;/lp.priv.key.pem  &gt;PUBLIC_IP&lt; 
+
+# Connect to an ec2 (windows)
+
+1. Navigate to the ec2 instance you want to connect to 
+1. Click connect
+1. Click get password and input the private key
+1. Click download the remote desktop file, run it, then input the password 
+
 
 
 
