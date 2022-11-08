@@ -12,8 +12,14 @@ module "networking"{
   
 }
 
+# module "ext"{
+#   source = "./ext"
+# }
+
 module "keys"{
   source = "./keys"
+
+  s3_bucket = var.s3_bucket
 }
 
 
@@ -24,4 +30,6 @@ module "workstations"{
   private_key_pem = module.keys.private_key_pem
   vpc_security_group_ids = module.networking.vpc_security_group_ids
   target_subnet = module.networking.public_subnets[0]
+  s3_bucket = var.s3_bucket
 }
+

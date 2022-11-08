@@ -33,7 +33,7 @@ resource "aws_instance" "windows" {
 }
 
 data "aws_s3_bucket" "storage" {
-  bucket = "iamlaunchpadteam0000201"
+  bucket = var.s3_bucket
 }
 
 resource "aws_s3_object" "windows_info" {

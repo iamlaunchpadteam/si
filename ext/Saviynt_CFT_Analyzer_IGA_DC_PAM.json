@@ -1,0 +1,242 @@
+{
+	"Description": "Cloud Formation template to create necessary role and policies required to provide Visibility and perform access management on AWS Accounts. Refer to the outputs tab for cross account role ARN.",
+	"Parameters": {
+		"MasterAccID": {
+			"Description": "Leave the value of MasterAccID as-is. Dont modify it.",
+			"Type": "String",
+			"MinLength": "1",
+			"Default": "928312015323",
+			"ConstraintDescription": "Please Enter a value for Account"
+		},
+		"ExternalId": {
+			"Description": "To input the value of ExternalId ",
+			"Type": "String",
+			"MinLength": "1",
+			"ConstraintDescription": "Please Enter a value for ExternalId"
+		}
+	},
+	"Resources": {
+		"SaviyntAWSRole": {
+			"Type": "AWS::IAM::Role",
+			"Properties": {
+				"AssumeRolePolicyDocument": {
+					"Statement": [{
+						"Effect": "Allow",
+						"Principal": {
+							"AWS": {
+								"Fn::Join": ["",
+									["arn:aws:iam::",
+										{
+											"Ref": "MasterAccID"
+										},
+										":root"
+									]
+								]
+							}
+						},
+						"Action": ["sts:AssumeRole"],
+
+						"Condition": {
+							"StringEquals": {
+								"sts:ExternalId": {
+									"Ref": "ExternalId"
+								}
+							}
+						}
+					}]
+				},
+
+				"Path": "/",
+				"ManagedPolicyArns": ["arn:aws:iam::aws:policy/ReadOnlyAccess"]
+			}
+		},
+		"SaviyntAWSDenyPolicy": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"Properties": {
+				"Description": "Policy for Deny Permissions",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [{
+						"Action": [
+							"dynamodb:GetItem",
+							"dynamodb:BatchGetItem",
+							"dynamodb:Query",
+							"dynamodb:Scan",
+							"ec2:GetConsoleOutput",
+							"ec2:GetConsoleScreenshot",
+							"ecr:BatchGetImage",
+							"ecr:GetAuthorizationToken",
+							"ecr:GetDownloadUrlForLayer",
+							"kinesis:Get*",
+							"lambda:GetFunction",
+							"logs:GetLogEvents",
+							"s3:GetObject",
+							"sdb:Select*",
+							"sqs:ReceiveMessage"
+						],
+						"Resource": ["*"],
+						"Effect": "Deny",
+						"Sid": "stmntforDeny"
+					}]
+				},
+				"Roles": [{
+					"Ref": "SaviyntAWSRole"
+				}]
+			}
+		},
+		"SaviyntAWSDCActionPolicy": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"Properties": {
+				"Description": "Policy for DC Actions",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [{
+						"Action": [
+							"cloudformation:DeleteStack",
+							"cloudtrail:StartLogging",
+							"cloudtrail:stoplogging",
+							"cloudtrail:UpdateTrail",
+							"ec2:DeleteSecurityGroup",
+							"ec2:DeleteSnapshot",
+							"ec2:DeleteVolume",
+							"ec2:DeleteVpcPeeringConnection",
+							"ec2:deregisterAMI",
+							"ec2:DetachVolume",
+							"ec2:ModifyImageAttribute",
+							"ec2:ModifyInstanceAttribute",
+							"ec2:ModifySnapshotAttribute",
+							"ec2:ReleaseAddress",
+							"ec2:RevokeSecurityGroupIngress",
+							"ec2:StopInstances",
+							"elasticloadbalancing:DeleteLoadBalancer",
+							"es:updateelasticsearchdomainconfig",
+							"events:DisableRule",
+							"events:EnableRule",
+							"iam:DeleteAccessKey",
+							"iam:DeleteGroup",
+							"iam:DeleteInlinepolicy",
+							"iam:DeleteLoginProfile",
+							"iam:DeleteUser",
+							"iam:DetachMangedpolicy",
+							"iam:UpdateAccountPasswordPolicy",
+							"kms:CancelKeyDeletion",
+							"kms:DeleteAccessKey",
+							"kms:EnableKeyRotation",
+							"kms:ScheduleKeyDeletion",
+							"rds:DeleteDBInstance",
+							"rds:DeleteDBSnapshot",
+							"rds:ModifyDBInstance",
+							"rds:ModifyDBSnapshotAttribute",
+							"rds:StopDBInstance",
+							"redshift:DeleteCluster",
+							"redshift:RevokeClusterSecurityGroupIngress",
+							"s3:PutBucketAcl",
+							"s3:PutBucketLogging",
+							"s3:PutBucketPolicy",
+							"s3:PutBucketVersioning",
+							"sns:Unsubscribe"
+						],
+						"Resource": ["*"],
+						"Effect": "Allow",
+						"Sid": "stmtforAllow"
+					}]
+				},
+				"Roles": [{
+					"Ref": "SaviyntAWSRole"
+				}]
+			}
+		},
+		"SaviyntCloudPAMPolicy": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"Properties": {
+				"Description": "Policy for Allow necessary Permissions to ec2 and ssm",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+
+						{
+							"Action": [
+								"iam:Get*",
+								"iam:List*",
+								"ec2:Describe*",
+								"ec2:Get*",
+								"ec2:CreateSecurityGroup",
+								"ec2:AuthorizeSecurityGroupIngress",
+								"ec2:UpdateSecurityGroupRuleDescriptionsIngress",
+								"ec2:ModifyInstanceAttribute",
+								"ec2:AssociateIamInstanceProfile",
+								"iam:CreatePolicy",
+								"iam:CreateRole",
+								"iam:PassRole",
+								"rds:ModifyDBInstance",
+								"iam:AttachRolePolicy",
+								"iam:AddRoleToInstanceProfile",
+								"iam:CreateInstanceProfile",
+								"sts:Get*"
+							],
+							"Resource": [
+								"*"
+							],
+							"Effect": "Allow",
+							"Sid": "AWSAllow"
+						}
+					]
+				},
+				"Roles": [{
+					"Ref": "SaviyntAWSRole"
+				}]
+			}
+		},
+		"SaviyntAWSIAMPolicy": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"Properties": {
+				"Description": "Policy for Access Management",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [{
+						"Action": ["iam:CreateAccessKey",
+							"iam:CreateLoginProfile",
+							"iam:CreateUser",
+							"iam:AddUserToGroup",
+							"iam:RemoveUserFromGroup",
+							"iam:AttachUserPolicy",
+							"iam:DetachUserPolicy",
+							"iam:AttachRolePolicy",
+							"iam:AttachGroupPolicy",
+							"iam:DetachGroupPolicy",
+							"iam:DeleteUser",
+							"iam:DeleteAccessKey",
+							"iam:DeleteLoginProfile",
+							"iam:PutUserPolicy",
+							"iam:CreatePolicy",
+							"iam:CreatePolicyVersion",
+							"iam:DeletePolicyVersion",
+							"iam:SetDefaultPolicyVersion",
+							"iam:UpdateAssumeRolePolicy",
+							"iam:DeletePolicy",
+							"iam:DeactivateMFADevice",
+							"iam:UpdateLoginProfile",
+							"iam:DeleteUserPolicy"
+						],
+						"Resource": ["*"],
+						"Sid": "StmtforARS",
+						"Effect": "Allow"
+					}]
+				},
+				"Roles": [{
+					"Ref": "SaviyntAWSRole"
+				}]
+			}
+		}
+	},
+	"Outputs": {
+		"SaviyntAWSRole": {
+			"Description": "Cross Account Role assumed by Saviynt Application. This role assumed by application has necessary permissions to read from AWS Accounts and perform access management.",
+			"Value": {
+				"Fn::GetAtt": ["SaviyntAWSRole",
+					"Arn"
+				]
+			}
+		}
+	}
+}
