@@ -9,3 +9,9 @@ variable "vpc_security_group_ids" {
 variable "target_subnet" {
   type = string
 }
+
+variable "private_key_pem" {
+  type = string
+}
+
+

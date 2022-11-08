@@ -34,7 +34,10 @@ This assumes you are running from a posix (git bash on windows) terminal
 
 1. Navigate to the ec2 instance you want to connect to 
 1. Click connect
-1. Click get password and input the private key
+1. Get the password by running this.. 
+
+    aws s3 cp s3://iamlaunchpadteam0000201/keys/windows.pwds -
+
 1. Click download the remote desktop file, run it, then input the password 
 
 

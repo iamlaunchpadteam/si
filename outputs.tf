@@ -7,6 +7,8 @@
 
 output "dns_names" {
     value = module.workstations.dns_names
+        sensitive = true
+
 }
 
 output "private_key"{
