@@ -32,18 +32,13 @@ resource "aws_instance" "windows" {
   }
 }
 
-data "aws_s3_bucket" "storage" {
-  bucket = var.s3_bucket
-}
 
 resource "aws_s3_object" "windows_info" {
   bucket = data.aws_s3_bucket.storage.id
   key    = "keys/windows.pwds"
   acl    = "private" 
   content = format(
-                    "posix: \n\t%s\n\t%s\nwindows: \n\t%s pass: %s\n\t%s pass: %s", 
-                    aws_instance.posix["one"].public_dns ,
-                    aws_instance.posix["two"].public_dns, 
+                    "windows: \n\t%s pass: %s\n\t%s pass: %s", 
                     aws_instance.windows["one"].public_dns , 
                     rsadecrypt(aws_instance.windows["one"].password_data, var.private_key_pem),//rsadecrypt(aws_instance.windows["one"].password_data, file("./lp.priv.key.pem")),//var.private_key_pem),
 

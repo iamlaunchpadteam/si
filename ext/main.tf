@@ -6,5 +6,5 @@ resource "aws_cloudformation_stack" "network" {
   }
 
   template_body = file("./ext/Saviynt_CFT_Analyzer_IGA_DC_PAM.json")
-
+  capabilities = ["CAPABILITY_IAM"]
 }

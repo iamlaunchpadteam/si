@@ -18,6 +18,13 @@ resource "aws_instance" "posix" {
   for_each = toset(["one", "two"])
   key_name = var.key_pair_name
 
+  root_block_device  {
+      delete_on_termination = false
+      volume_size = "30"
+      volume_type = "gp2"
+      
+    }
+
   tags = {
     Name = "posix-instance-${each.key}"
   }
@@ -44,3 +51,16 @@ resource "aws_instance" "posix" {
 #     Environment = "dev"
 #   }
 # }
+
+
+
+resource "aws_s3_object" "posix_info" {
+  bucket = data.aws_s3_bucket.storage.id
+  key    = "keys/posix.info"
+  acl    = "private" 
+  content = format(
+                    "posix: \n\t%s\n\t%s\n", 
+                    aws_instance.posix["one"].public_dns ,
+                    aws_instance.posix["two"].public_dns, 
+                   )   
+}

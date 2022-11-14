@@ -12,9 +12,9 @@ module "networking"{
   
 }
 
-# module "ext"{
-#   source = "./ext"
-# }
+module "ext"{
+  source = "./ext"
+}
 
 module "keys"{
   source = "./keys"

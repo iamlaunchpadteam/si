@@ -5,8 +5,19 @@
 #     value = format("%s, %s", module.ec2_instance["one"].public_dns ,module.ec2_instance["two"].public_dns) 
 # }
 
-output "dns_names" {
-    value = module.workstations.dns_names
+# output "dns_names" {
+#     value = module.workstations.dns_names
+#         sensitive = true
+
+# }
+
+output "posix_info" {
+    value = module.workstations.posix_info
+        sensitive = true
+}
+
+output "windows_info" {
+    value = module.workstations.windows_info
         sensitive = true
 
 }
