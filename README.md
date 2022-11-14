@@ -36,8 +36,10 @@ This assumes you are running from a posix (git bash on windows) terminal
 
 # Connect to an ec2 (windows)
 
-1. Navigate to the ec2 instance you want to connect to 
+1. Navigate to the ec2 instance you want to connect to in the aws console (ui)
+1. Click the instance Id
 1. Click connect
+1. Click RDP-client
 1. Get the uri and password by running this.. 
 
     aws s3 cp s3://iamlaunchpadteam0000201/keys/windows.pwds -
