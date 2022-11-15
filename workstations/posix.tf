@@ -2,19 +2,67 @@ data "aws_ami" "posix_ami" {
   most_recent      = true
   owners           = ["amazon"]
 
+  # filter {
+  #   name   = "name"
+  #   values = ["amzn-ami-hvm-*-x86_64-gp2"]
+  # }
+
   filter {
-    name   = "name"
-    values = ["amzn-ami-hvm-*-x86_64-gp2"]
+   name   = "name"
+   values = ["amzn2-ami-hvm*"]
   }
 
+    # filter {
+    #     name   = "name"
+    #     values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
+    # }
+
+    # filter {
+    #     name   = "virtualization-type"
+    #     values = ["hvm"]
+    # }
+
 }
+
+resource "aws_iam_instance_profile" "dev-resources-iam-profile" {
+name = "ec2_profile"
+role = aws_iam_role.dev-resources-iam-role.name
+}
+resource "aws_iam_role" "dev-resources-iam-role" {
+  name        = "dev-ssm-role"
+  description = "The role for the developer resources EC2"
+  assume_role_policy = <<EOF
+  {
+  "Version": "2012-10-17",
+  "Statement": {
+  "Effect": "Allow",
+  "Principal": {"Service": "ec2.amazonaws.com"},
+  "Action": "sts:AssumeRole"
+  }
+  }
+  EOF
+  tags = {
+    stack = "test"
+  }
+}
+
+data "template_file" "startup" {
+ template = file("workstations/ssm-agent-installer.sh")
+}
+
+
+resource "aws_iam_role_policy_attachment" "dev-resources-ssm-policy" {
+  role       = aws_iam_role.dev-resources-iam-role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
 
 resource "aws_instance" "posix" { 
   subnet_id            = var.target_subnet
   vpc_security_group_ids = var.vpc_security_group_ids
   ami           = data.aws_ami.posix_ami.id
   instance_type = "t3.micro"
-
+  iam_instance_profile = aws_iam_instance_profile.dev-resources-iam-profile.name 
   for_each = toset(["one", "two"])
   key_name = var.key_pair_name
 
@@ -28,6 +76,9 @@ resource "aws_instance" "posix" {
   tags = {
     Name = "posix-instance-${each.key}"
   }
+
+  user_data = data.template_file.startup.rendered
+
 }
 
 # module "ec2_instance" {
