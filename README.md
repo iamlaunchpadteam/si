@@ -3,7 +3,7 @@
 ## Setup 
 
 1. Install and configure
-GitBash
+GitBash (in addition to your regular settings... add this...  git config --global core.autocrlf false)
 AWS CLI
 Terraform
 VSC

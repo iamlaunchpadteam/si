@@ -15,8 +15,17 @@ resource "aws_instance" "windows" {
   ami           = data.aws_ami.windows_ami.id
   instance_type = "t3.micro"
   get_password_data = true
+  iam_instance_profile = aws_iam_instance_profile.dev-resources-iam-profile.name 
+  
   user_data = <<EOF
     <powershell>
+    $dir = $env:TEMP + "\ssm"
+    New-Item -ItemType directory -Path $dir -Force
+    cd $dir
+    (New-Object System.Net.WebClient).DownloadFile("https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/windows_amd64/AmazonSSMAgentSetup.exe", $dir + "\AmazonSSMAgentSetup.exe")
+    Start-Process .\AmazonSSMAgentSetup.exe -ArgumentList @("/q", "/log", "install.log") -Wait
+
+
     # Rename Machine
     Rename-Computer -NewName windows-instance-"${each.key}" -Force;
 
@@ -26,6 +35,13 @@ resource "aws_instance" "windows" {
     EOF
   for_each = toset(["one", "two"])
   key_name = var.key_pair_name
+
+  root_block_device  {
+      delete_on_termination = true
+      volume_size = "30"
+      volume_type = "gp2"
+      
+    }
 
   tags = {
     Name = "windows-instance-${each.key}"
