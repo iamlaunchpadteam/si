@@ -27,11 +27,11 @@ output "posix_info" {
 output "windows_info" {
     value  = format(
                     "windows: \n\t%s pass: %s\n\t%s pass: %s", 
-                    aws_instance.windows["one"].public_dns , 
-                    rsadecrypt(aws_instance.windows["one"].password_data, var.private_key_pem),//rsadecrypt(aws_instance.windows["one"].password_data, file("./lp.priv.key.pem")),//var.private_key_pem),
+                    aws_instance.windows.public_dns , 
+                    rsadecrypt(aws_instance.windows.password_data, var.private_key_pem),//rsadecrypt(aws_instance.windows["one"].password_data, file("./lp.priv.key.pem")),//var.private_key_pem),
 
-                    aws_instance.windows["two"].public_dns,  
-                    rsadecrypt(aws_instance.windows["two"].password_data, var.private_key_pem)//rsadecrypt(aws_instance.windows["two"].password_data, file("./lp.priv.key.pem"))//var.private_key_pem)
+                    aws_instance.windows_lg.public_dns,  
+                    rsadecrypt(aws_instance.windows.password_data, var.private_key_pem)//rsadecrypt(aws_instance.windows["two"].password_data, file("./lp.priv.key.pem"))//var.private_key_pem)
                     )   
     sensitive = true
 }
