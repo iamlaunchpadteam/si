@@ -33,13 +33,21 @@ resource "aws_security_group" "allow" {
 #     ipv6_cidr_blocks = ["::/0"]
 #   }
 
+  # ingress {
+  #   description      = "all "
+  #   from_port        = 0
+  #   to_port          = 0
+  #   protocol         = "-1"
+  #   cidr_blocks      = ["0.0.0.0/0"]
+  #   ipv6_cidr_blocks = ["::/0"]
+  # }
+
   ingress {
     description      = "all "
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    cidr_blocks      = ["3.83.200.219/32"]
   }
 
 #    ingress {
