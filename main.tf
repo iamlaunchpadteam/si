@@ -34,3 +34,10 @@ module "workstations"{
   s3_bucket = var.s3_bucket
 }
 
+module "containers"{
+  source = "./containers"
+  
+  vpc_id = module.networking.vpc_id
+  subnets = module.networking.public_subnets
+  security_groups = module.networking.vpc_security_group_ids
+}
